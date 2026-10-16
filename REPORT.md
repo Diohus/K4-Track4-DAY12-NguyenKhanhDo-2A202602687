@@ -13,15 +13,16 @@ Giữ nguyên cấu hình huấn luyện, số vòng DAgger và ngưỡng cổng
 
 ## Kết quả cuối
 
-Điền từ `evidence/closedloop.json`, `openloop.json`, `gate.json` (cho mỗi mô hình học, lấy **dải qua các seed**).
+Số liệu từ `evidence/closedloop.json`, `openloop.json`, `gate.json`; mô hình học trình bày min–max qua 3 seed.
+L2 từng seed PercMLP+ được tính lại từ các trọng số đã lưu, không huấn luyện thêm, trong `evidence/percfix_l2.json`; trung bình 0,831669 m khớp `openloop.json`.
 
 | Bộ điều khiển | L2 vòng hở (m) | Va chạm vòng kín trên log (%) | Quyết định cổng |
 |---|---|---|---|
-| constant-velocity | | | |
-| IDM | | | (baseline) |
-| EgoMLP | | | |
-| PercMLP | | | |
-| PercMLP+ (sau khi sửa) | | | |
+| constant-velocity | 1,253633 | 20,7423 | BLOCK |
+| IDM | 1,541805 | 0,0347 | (baseline) |
+| EgoMLP | 0,761000–0,764408 | 20,6729–23,4131 | BLOCK |
+| PercMLP | 0,617739–0,621094 | 0,3469–1,5262 | BLOCK |
+| PercMLP+ (sau khi sửa) | 0,813446–0,866636 | 0,1734–0,2081 | RELEASE (7/7 quy tắc) |
 
 ## Câu 1 · Dữ liệu
 Bước 0 bạn phát hiện những vấn đề gì ở dữ liệu? Vì sao không dùng cột `Acc_LV`, và bạn thay bằng gì? Bao nhiêu quỹ đạo bị loại vì trùng, và vì sao chia theo quỹ đạo?
@@ -100,7 +101,14 @@ W1 nhỏ hơn chỉ xác nhận phân phối khoảng cách thời gian gần lo
 ## Câu 7 · Cổng phát hành và sửa
 Quy tắc nào chặn PercMLP và nguyên nhân gốc là gì (dẫn số)? Bạn sửa bằng gì và vì sao nó chữa đúng nguyên nhân? Sau khi qua cổng, PercMLP+ có **tốt hơn** IDM không? Nó có nên được phát hành không, và bạn đề xuất làm gì trước khi quyết định?
 
-(trả lời ở đây)
+`evidence/gate.json` chặn PercMLP ở R2–R6: cận trên Wilson toàn log 2,0425% vượt IDM 0,0347% + 1 điểm; cận trên lát phanh 8,8091% vượt ngưỡng R3 là 5%.
+R5 trượt vì dải va chạm 0,3469–1,5262% rộng 1,1793 điểm; đây cùng R2/R3 là biểu hiện sai số tích lũy và bất ổn khi mô hình tự đưa mình vào trạng thái khác log huấn luyện.
+R4 có 11,4444% lưới đâm dù tránh được, vượt mức 2%; R6 có 16,5926% va chạm trong thế giới phản ứng so với IDM 5,1481% + 2 điểm, gắn với các tình huống cắt vào ít có trong log.
+Theo `evidence/fix.json`, giữ đúng 20.000 kịch bản cắt vào và 2 vòng DAgger: dữ liệu cắt vào bổ sung miền thiếu, còn DAgger gán nhãn dự báo IDM tại chính trạng thái mô hình tự đi vào để học phục hồi.
+Sau sửa, R2–R6 đều chuyển sang đạt: cận trên toàn log 0,4533%, cận trên lát phanh 2,1601%, vùng đâm tránh được 0,1852%, dải va chạm 0,1734–0,2081% và va chạm với xe sau phản ứng 5,3333%; đủ 7/7 quy tắc nên cổng trả RELEASE.
+L2 trung bình lại tăng từ 0,619818 lên 0,831669 m, cho thấy điểm bắt chước vòng hở và an toàn vòng kín không đồng nghĩa; PercMLP+ học nhãn IDM nên chưa có cơ sở kết luận vượt IDM.
+Trên log, PercMLP+ vẫn đâm 5–6/2.883 ca so với IDM 1/2.883; ở cruise giữ lại 20 m/s, vùng đâm tránh được là 0,0741–1,1111% so với IDM 0%, nên chỉ kết luận đạt tiêu chí không kém hơn trong cổng đã chọn.
+Chấp nhận RELEASE trong phạm vi kiểm thử của bài, chưa thay IDM trên xe thật; cần xác minh các ca còn đâm, dữ liệu độc lập, tốc độ ngoài miền huấn luyện và thử nghiệm có giám sát trước quyết định triển khai.
 
 ## Câu 8 · Bài lab này không chứng minh được gì
 Chọn **ít nhất ba** giới hạn quan trọng nhất đối với việc quyết định phát hành và giải thích vì sao mỗi cái làm kết luận của bạn kém chắc chắn. Điều gì cần làm tiếp để thu hẹp khoảng cách đến thế giới thật?

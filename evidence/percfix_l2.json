@@ -1,0 +1,29 @@
+{
+  "student": {
+    "student_id": "2A202602687",
+    "split_seed": 2205,
+    "model_seed": 5011,
+    "v_ego": 10.0
+  },
+  "note": "Read-only evaluation of saved PercMLP+ models, without retraining; individual L2 scores supplement the standard pipeline summary.",
+  "per_seed": [
+    {
+      "seed": 5011,
+      "all": 0.8134459853172302,
+      "brake_slice": 1.0078635215759277,
+      "slice_share": 0.0463165521757911
+    },
+    {
+      "seed": 5012,
+      "all": 0.8666363954544067,
+      "brake_slice": 1.003084659576416,
+      "slice_share": 0.0463165521757911
+    },
+    {
+      "seed": 5013,
+      "all": 0.8149237036705017,
+      "brake_slice": 0.9524837136268616,
+      "slice_share": 0.0463165521757911
+    }
+  ]
+}
