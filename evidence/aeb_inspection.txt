@@ -1,0 +1,4 @@
+Segment 82; changed frames: [75, 76, 77]
+frame 75: gap=4.9981 m; closing=3.3883 m/s; TTC=1.475106 s; command=-4.384532 -> -6.000000 m/s^2
+frame 76: gap=4.6866 m; closing=3.2052 m/s; TTC=1.462186 s; command=-4.363352 -> -6.000000 m/s^2
+frame 77: gap=4.3966 m; closing=3.0624 m/s; TTC=1.435671 s; command=-4.350441 -> -6.000000 m/s^2
